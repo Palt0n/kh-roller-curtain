@@ -1,4 +1,4 @@
-#
+# https://learn.sparkfun.com/tutorials/easy-driver-hook-up-guide
 #
 # MS1	MS2	Microstep Resolution
 # L 	L	Full Step (2 Phase)
