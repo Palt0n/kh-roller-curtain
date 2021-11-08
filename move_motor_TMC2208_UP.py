@@ -9,6 +9,7 @@
 from time import sleep
 import RPi.GPIO as GPIO
 
+PIN_RELAY  = 17
 PIN_MS1  = 26
 PIN_STEP = 13
 PIN_DIR  = 6
@@ -21,11 +22,14 @@ DELAY = 0.00005
 MAX_COUNT = 80000
 
 GPIO.setmode(GPIO.BCM)
+GPIO.setup(PIN_RELAY , GPIO.OUT)
 GPIO.setup(PIN_MS1 , GPIO.OUT)
 GPIO.setup(PIN_STEP, GPIO.OUT)
 GPIO.setup(PIN_DIR , GPIO.OUT)
 GPIO.setup(PIN_MS2 , GPIO.OUT)
 
+# Set Relay
+GPIO.output(PIN_RELAY, GPIO.LOW)
 
 # Set Microstep Type
 GPIO.output(PIN_MS1, GPIO.LOW)
@@ -45,7 +49,9 @@ try:
         GPIO.output(PIN_STEP, GPIO.LOW)
         sleep(DELAY)
 except KeyboardInterrupt:
+    GPIO.output(PIN_RELAY, GPIO.HIGH)
     GPIO.cleanup()
     raise
 
+GPIO.output(PIN_RELAY, GPIO.HIGH)
 GPIO.cleanup()
