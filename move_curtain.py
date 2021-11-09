@@ -4,15 +4,16 @@ import sys
 from Libraries.filelock import FileLock
 import os
 
-PATH_CURTAIN_LOCK = "curtain"
-PATH_CURTAIN_DIRECTION = "curtain"
+PATH_CURTAIN_LOCK = "~/kh-roller-curtain/curtain.lock"
+PATH_CURTAIN_LOCK = os.path.expanduser(PATH_CURTAIN_LOCK)
+PATH_CURTAIN_DIRECTION = "~/kh-roller-curtain/curtain.direction"
+PATH_CURTAIN_DIRECTION = os.path.expanduser(PATH_CURTAIN_DIRECTION)
 
 fl = FileLock("curtain", timeout=1, delay=.05, timerelease=100)
 fl.acquire()
 
-path_dir = os.path.join(os.getcwd(), "{}.direction".format(PATH_CURTAIN_DIRECTION))
-if os.path.isfile(path_dir):
-    with open(path_dir, "r") as fh:
+if os.path.isfile(PATH_CURTAIN_DIRECTION):
+    with open(PATH_CURTAIN_DIRECTION, "r") as fh:
         curtain_state = fh.read().rstrip()
 else:
     curtain_state = "DOWN"
@@ -44,10 +45,15 @@ GPIO.output(PIN_MS1, GPIO.LOW)
 GPIO.output(PIN_MS2, GPIO.LOW)
 
 # Set Direction
-if curtain_state == "UP":
-    GPIO.output(PIN_DIR, DIR_DOWN)
-elif curtain_state == "DOWN":
-    GPIO.output(PIN_DIR, DIR_UP)
+with open(PATH_CURTAIN_DIRECTION, "w+") as fh:
+    if curtain_state == "UP":
+        GPIO.output(PIN_DIR, DIR_DOWN)
+        fh.write("DOWN")
+    elif curtain_state == "DOWN":
+        GPIO.output(PIN_DIR, DIR_UP)
+        fh.write("UP")
+    else:
+        raise ValueError("Unexpected")
 
 count = 0
 try:
@@ -65,12 +71,5 @@ except KeyboardInterrupt:
 GPIO.output(PIN_RELAY, GPIO.HIGH)
 GPIO.cleanup()
 
-with open(path_dir, "w+") as fh:
-    if curtain_state == "UP":
-        fh.write("DOWN")
-    elif curtain_state == "DOWN":
-        fh.write("UP")
-    else:
-        raise ValueError("Unexpected")
 
 fl.release()

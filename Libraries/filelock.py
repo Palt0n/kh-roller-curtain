@@ -18,7 +18,7 @@ class FileLock(object):
         if timeout is not None and delay is None:
             raise ValueError("If timeout is not None, then delay must not be None.")
         self.is_locked = False
-        self.lockfile = os.path.join(os.getcwd(), "%s.lock" % file_name)
+        self.lockfile = file_name #os.path.join(os.getcwd(), "%s.lock" % file_name)
         self.file_name = file_name
         self.timeout = timeout
         self.delay = delay
