@@ -49,9 +49,11 @@ with open(PATH_CURTAIN_DIRECTION, "w+") as fh:
     if curtain_state == "UP":
         GPIO.output(PIN_DIR, DIR_DOWN)
         fh.write("DOWN")
+        print('{"state": "down"}')
     elif curtain_state == "DOWN":
         GPIO.output(PIN_DIR, DIR_UP)
         fh.write("UP")
+        print('{"state": "up"}')
     else:
         raise ValueError("Unexpected")
 
